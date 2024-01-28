@@ -124,7 +124,7 @@
 
                 }else if(target.className === 'move_point'){
                     //이동 좌표 선택시 
-                    // console.log(target.dataset);
+                    console.log(target.dataset);
                     if(SELECTED.length > 0){
                         console.log("선택된 유닛 있음")
                         let s_unit = SELECTED[0];
@@ -237,9 +237,12 @@
             let createUnits=()=>{
                 let unit = new JANG('blue');
                 let unit2 = new JANG('red');
+                let unit3 = new CHA_LEFT('blue');
+                let unit4 = new CHA_RIGHT('blue');
                 unit.setUnit();
                 unit2.setUnit();
-
+                unit3.setUnit();
+                unit4.setUnit();
                 console.log("3. 유닛 생성 완료")
             }
          
