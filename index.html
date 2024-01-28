@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <head>
+        <style>
+            @import url(css/reset.css);
+            * {margin: 0; padding: 0}
+            .content_div{
+                position: absolute;
+                margin-left: 30%;
+            }
+            .jg_pan{
+                border: 1px solid #424242;
+                /* height: 800px;
+                width: 680px; */
+            }
+            .point_object{
+                position: absolute;
+                background-color: rgba(0,0,0,0);
+                width: 30px;
+                height: 30px;
+                border-radius: 30px;
+            }
+            .point_object:hover{
+                background-color: rgba(0,255,0,0.5);
+                cursor: pointer;
+            }
+        </style>
+        <script src="js/mal_module.js"></script>
+    </head>
+    <body>
+        <h1>장기온라인</h1>
+        <div class="wrap">
+            <div id="content" class="content_div">
+                <canvas id="jgPan" class="jg_pan" width="800" height="880"></canvas>
+            </div>
+        </div>
+        <script>
+
+            window.onload = function(){
+                init();
+            }
+
+            let init =() => {
+                drawRoad();
+                createUnits();
+                
+            }
+
+           
+            // const MAP_XY = [
+            //     [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],
+            //     [0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],
+            //     [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2],
+            //     [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[7,3],[8,3],
+            //     [0,4],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4],[8,4],
+            //     [0,5],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5],[7,5],[8,5],
+            //     [0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,6],[7,6],[8,6],
+            //     [0,7],[1,7],[2,7],[3,7],[4,7],[5,7],[6,7],[7,7],[8,7],
+            //     [0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],[8,8]
+            // ];
+            let MAP_XY = [];
+            
+            const canvas = document.getElementById('jgPan');
+            const WIDTH = canvas.width;
+            const HEIGHT = canvas.height;
+
+            /*
+                장기판 관련
+            */
+            const JGCellCount = 8; // 한줄당 칸 수
+            const JGctx = canvas.getContext("2d");
+            const JGPointCtx = canvas.getContext("2d");
+            const cellWidthUnit = (WIDTH/JGCellCount);//한칸의 너비
+            const cellHeightUnit = (HEIGHT/JGCellCount);//한칸의 높이
+
+
+            const fn_mousemove = (e) => {
+                // console.log("mouseover on the canvas!");
+                getCursorPosition(canvas,e);
+            }
+
+            // const fn_mousedown = (e) => {
+            //     // console.log("mouseclick on the canvas!");
+            //     getCursorPosition(canvas,e);
+            // }
+
+
+            const getCursorPosition = (canvas, event) => {
+                const rect = canvas.getBoundingClientRect()
+                const mouseX = event.clientX - rect.left
+                const mouseY = event.clientY - rect.top
+            }
+
+            canvas.addEventListener('mousemove',fn_mousemove);
+            // canvas.addEventListener('mousedown',fn_mousedown);
+
+            // 포인트 좌표 베이스 만들기
+            let createCoord=(x,y)=>{
+                let corrdDIV = document.createElement("div");
+                corrdDIV.className = 'move_point';
+                corrdDIV.style.position = 'absolute';
+                corrdDIV.style.background = 'rgba(255,100,200,0.5)';
+
+                //근처만 찍어도 이동 포인트 찍힐수있도록 크기 키움
+                corrdDIV.style.width = '100px';
+                corrdDIV.style.height = '100px';
+                corrdDIV.style.top = (y-49)+'px';
+                corrdDIV.style.left = (x-49)+'px';
+                corrdDIV.dataset.x = x;
+                corrdDIV.dataset.y = y;
+                document.getElementById("content").appendChild(corrdDIV);
+            } 
+
+            //선택 이벤트리스너
+            document.getElementById("content").addEventListener('click',function(e){
+                let target = e.target;
+                //console.log('clicking > ', e.target);
+
+                if(target.className === 'units'){
+                    //선택된게 유닛일 경우     
+                    let name = target.dataset.name;
+                    let team = target.dataset.team;
+                    let selectedUnit = UNITS[team][name];
+                    //console.log("select unit", selectedUnit);
+                    selected(selectedUnit,e.target);
+
+                }else if(target.className === 'move_point'){
+                    //이동 좌표 선택시 
+                    console.log(target.dataset);
+                    if(SELECTED.length > 0){
+                        console.log("선택된 유닛 있음")
+                        let s_unit = SELECTED[0];
+                        s_unit['tag'].style.left = (target.dataset.x-34)+'px';
+                        s_unit['tag'].style.top = (target.dataset.y-34)+'px';
+                        // s_unit['tag'].animate([
+                        //     {
+                        //         transform: [
+                        //             'translateX(0px)',  // 시작 값
+                        //             'translateX('+target.dataset.y+'px)'  // 종료 값
+                        //         ]
+                        //     }
+                        // ], 2000);
+                        
+                    }
+
+
+                }else{
+
+                }
+
+            })
+
+
+            // 맵 만들기
+            let drawRoad = ()=>{
+                /*
+                    point(좌표) 관련
+                */
+                const pWidth = 30/2;
+                const pHeight = 30/2;
+
+                JGctx.lineWidth = 1; 
+                JGctx.beginPath();
+
+                //전체 테두리 그리기
+                JGctx.moveTo(0, 0);
+                JGctx.lineTo(WIDTH,0);
+                JGctx.moveTo(WIDTH,0);
+                JGctx.lineTo(WIDTH,HEIGHT);
+                JGctx.moveTo(WIDTH,HEIGHT);
+                JGctx.lineTo(0,HEIGHT);
+                JGctx.moveTo(0,HEIGHT);
+                JGctx.lineTo(0,0);
+
+                //X 라인 그리기
+                for (let x = 1; x < JGCellCount; x++) {
+                    let xLine = cellWidthUnit*x
+
+                    if(x == 3){
+                        JGctx.moveTo(xLine, 0);
+                        JGctx.lineTo(xLine+cellWidthUnit, cellHeightUnit);
+                        JGctx.lineTo(xLine, cellHeightUnit+cellHeightUnit);
+                    }
+                    if(x == 5){
+                        JGctx.moveTo(xLine, 0);
+                        JGctx.lineTo(xLine-cellWidthUnit, cellHeightUnit);
+                        JGctx.lineTo(xLine, cellHeightUnit+cellHeightUnit);
+
+                    }
+                    JGctx.moveTo(xLine, 0);
+                    JGctx.lineTo(xLine, HEIGHT);
+                }
+                //Y 라인 그리기
+                for (let y = 1; y < JGCellCount; y++) {
+                    let yLine = cellHeightUnit*y
+                    if(y == 6){
+                        JGctx.moveTo(cellWidthUnit*3, yLine);
+                        JGctx.lineTo(cellWidthUnit*4, yLine+cellHeightUnit);
+                        JGctx.moveTo(cellWidthUnit*4, yLine+cellHeightUnit);
+                        JGctx.lineTo(cellWidthUnit*5, yLine);
+                    }
+                    if(y == 7){
+                        JGctx.moveTo(cellWidthUnit*4, yLine);
+                        JGctx.lineTo(cellWidthUnit*3, yLine+cellHeightUnit);
+                        JGctx.moveTo(cellWidthUnit*4, yLine);
+                        JGctx.lineTo(cellWidthUnit*5, yLine+cellHeightUnit);
+                    }
+                    JGctx.moveTo(0, yLine);
+                    JGctx.lineTo(WIDTH, yLine);
+                }
+                JGctx.strokeStyle = "blue";
+                JGctx.stroke();
+                
+                console.log("1. 장기판 생성 완료");
+
+                //이동 포인트 만들기(꼭지점)
+                for (let cy = 0; cy <= JGCellCount; cy++) {
+                    let y = cellHeightUnit*cy
+                    JGPointCtx.beginPath();  
+                    for (let cx = 0; cx <= JGCellCount; cx++) {
+                        let x = cellWidthUnit*cx
+                        MAP_XY.push([x,y]);
+                        createCoord(x,y);
+                        JGPointCtx.arc(x, y, 30, 0, 2 * Math.PI);
+                    }
+                    if (cy>4) {
+                        JGPointCtx.fillStyle = "rgba(255,0,0,0.5)";
+                    }else if(cy<4){
+                        JGPointCtx.fillStyle = "rgba(0,0,255,0.5)";
+                    }else{
+                        JGPointCtx.fillStyle = "rgba(0,0,0,0.5)";
+                    }
+                    JGPointCtx.fill();
+                    // JGPointCtx.stroke();
+                }
+                console.log("2. 유닛 이동 포인트 생성 완료");
+            }
+
+            let createUnits=()=>{
+                let unit = new JANG('blue');
+                unit.setUnit();
+
+
+                //SETTING UNITS
+                UNITS[unit.team][unit.name] = unit;   
+
+                console.log("3. 유닛 생성 완료")
+            }
+         
+        </script>
+    </body>
+
+</html>
