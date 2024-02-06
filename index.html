@@ -2,6 +2,7 @@
     <head>
         <style>
             @import url(css/reset.css);
+            @import url(css/main.css);
             * {margin: 0; padding: 0}
             .content_div{
                 position: absolute;
@@ -29,6 +30,7 @@
     <body>
         <h1>장기온라인</h1>
         <div class="wrap">
+            <button id="reset" onclick="reset();">게임리셋</button>
             <div id="content" class="content_div">
                 <canvas id="jgPan" class="jg_pan" width="800" height="880"></canvas>
             </div>
@@ -130,14 +132,6 @@
                         let s_unit = SELECTED[0];
                         s_unit['tag'].style.left = (target.dataset.x-34)+'px';
                         s_unit['tag'].style.top = (target.dataset.y-34)+'px';
-                        // s_unit['tag'].animate([
-                        //     {
-                        //         transform: [
-                        //             'translateX(0px)',  // 시작 값
-                        //             'translateX('+target.dataset.y+'px)'  // 종료 값
-                        //         ]
-                        //     }
-                        // ], 2000);
                         selected(s_unit['unit'],s_unit['tag'])
                     }
 
@@ -235,14 +229,42 @@
             }
 
             let createUnits=()=>{
-                let unit = new JANG('blue');
-                let unit2 = new JANG('red');
-                let unit3 = new CHA_LEFT('blue');
-                let unit4 = new CHA_RIGHT('blue');
-                unit.setUnit();
-                unit2.setUnit();
-                unit3.setUnit();
-                unit4.setUnit();
+                // 청나라 유닛 생성
+                new JANG().setUnit('blue');
+                new CHA().setUnit('blue','L');
+                new CHA().setUnit('blue','R');
+                new PO().setUnit('blue','L');
+                new PO().setUnit('blue','R');
+                new JOL().setUnit('blue','1');
+                new JOL().setUnit('blue','2');
+                new JOL().setUnit('blue','3');
+                new JOL().setUnit('blue','4');
+                new JOL().setUnit('blue','5');
+                new MA().setUnit('blue','R','L');
+                new MA().setUnit('blue','L','L');
+                new SANG().setUnit('blue','R','R');
+                new SANG().setUnit('blue','L','R');
+                new SA().setUnit('blue','L');
+                new SA().setUnit('blue','R');
+
+                // 홍나라 유닛 생성
+                new JANG().setUnit('red');
+                new CHA().setUnit('red','L');
+                new CHA().setUnit('red','R');
+                new PO().setUnit('red','L');
+                new PO().setUnit('red','R');
+                new JOL().setUnit('red','1');
+                new JOL().setUnit('red','2');
+                new JOL().setUnit('red','3');
+                new JOL().setUnit('red','4');
+                new JOL().setUnit('red','5');
+                new MA().setUnit('red','R','L');
+                new MA().setUnit('red','L','L');
+                new SANG().setUnit('red','R','R');
+                new SANG().setUnit('red','L','R');
+                new SA().setUnit('red','L');
+                new SA().setUnit('red','R');
+                
                 console.log("3. 유닛 생성 완료")
             }
          
