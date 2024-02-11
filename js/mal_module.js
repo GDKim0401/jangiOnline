@@ -246,8 +246,14 @@ const set_style=(_this)=>{
 /*
     유닛 이동 함수
 */
-const move=()=>{
-
+const move=(_target)=>{
+    if(SELECTED.length > 0){
+        console.log("선택된 유닛 있음")
+        let s_unit = SELECTED[0];
+        s_unit['tag'].style.left = (_target.dataset.x-(s_unit.unit.width/2))+'px';
+        s_unit['tag'].style.top = (_target.dataset.y-(s_unit.unit.height/2))+'px';
+        selected(s_unit['unit'],s_unit['tag'])
+    }
 }
 /*
     유닛 선택 함수
@@ -271,12 +277,10 @@ const selected = (_unit,_tag) =>{
 /*
     유닛 상태 함수
 */
+const attach=(unit,moveTO)=>{
+    
 
-
-/*
-    draw 함수
-*/
-
+}
 
 
 /*

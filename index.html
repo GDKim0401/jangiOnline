@@ -122,22 +122,19 @@
                     let team = target.dataset.team;
                     let selectedUnit = UNITS[team][name];
                     //console.log("select unit", selectedUnit);
-                    selected(selectedUnit,e.target);
 
-                }else if(target.className === 'move_point'){
-                    //이동 좌표 선택시 
-                    console.log(target.dataset);
-                    if(SELECTED.length > 0){
-                        console.log("선택된 유닛 있음")
-                        let s_unit = SELECTED[0];
-                        s_unit['tag'].style.left = (target.dataset.x-34)+'px';
-                        s_unit['tag'].style.top = (target.dataset.y-34)+'px';
-                        selected(s_unit['unit'],s_unit['tag'])
+                    //선택은 한번만가능하도록
+                    if(SELECTED.length<1){
+                        selected(selectedUnit,e.target);
+                    }else{
+                        console.log("공격준비!")
+                        attach(selectedUnit,e.target);
                     }
 
-
+                }else if(target.className === 'move_point'){
+                        //이동 좌표 선택시 
+                        move(target);
                 }else{
-
                 }
 
             })
@@ -200,7 +197,7 @@
                     JGctx.moveTo(0, yLine);
                     JGctx.lineTo(WIDTH, yLine);
                 }
-                JGctx.strokeStyle = "blue";
+                JGctx.strokeStyle = "black";
                 JGctx.stroke();
                 
                 console.log("1. 장기판 생성 완료");
@@ -264,7 +261,7 @@
                 new SANG().setUnit('red','L','R');
                 new SA().setUnit('red','L');
                 new SA().setUnit('red','R');
-                
+
                 console.log("3. 유닛 생성 완료")
             }
          
