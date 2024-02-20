@@ -6,18 +6,51 @@
             * {margin: 0; padding: 0}
 
             body{
-                background-color: rgba(0, 0, 0, 0.473);
-                /* cursor: url('./img/cursor.png'); */
+                /* --stone-bg: url("https://blz-contentstack-images.akamaized.net/v3/assets/blt45749e0fed8aa592/bltaac1c234002cf91b/601441486506885fe6215eca/site-bg-xs.jpg"); */
+                margin: 0;
+                background-color: black;
+                background-image: radial-gradient(circle farthest-corner at 50% calc(50% - 200px), rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 90%, black 100%), var(--stone-bg);
+                background-position: top center;
+                background-repeat: repeat-y;
+                min-height: 100vh;
+                overflow-x: hidden !important;
+                --row-gap: var(--size-600);
+            }
+            .blz-button{
+                color: #7AFF7A;
+                font-weight: 900;
+                box-sizing: border-box;
+                background: url("https://images.blz-contentstack.com/v3/assets/blt9c12f249ac15c7ec/bltb5de5ae67a93d18c/646d181aeb5acf10b838eda9/scan_lines.png"), linear-gradient(180deg, rgba(0, 0, 0, 0.3) 30.73%, rgba(0, 51, 1, 0.3) 72.92%, rgba(0, 134, 3, 0.3) 100%), #151515;
+                background-size: cover;
+                background-blend-mode: lighten, normal, normal;
+                border: 1px solid #00FF00;
+                border-radius: 4px;
+                font-family: "Eurostile Extd";
+                text-shadow: 0px 1px 5px #000000, 0px 1px 23px rgba(112, 255, 0, 0.29);
+            }
+            .blz-button2{
+                box-sizing: border-box;
+                background: url("https://images.blz-contentstack.com/v3/assets/blt9c12f249ac15c7ec/bltb5de5ae67a93d18c/646d181aeb5acf10b838eda9/scan_lines.png"), linear-gradient(180deg, rgba(30, 134, 176, 0) 0%, rgba(30, 134, 176, 0.3) 100%), #000000;
+                background-size: cover;
+                background-blend-mode: lighten, normal, normal;
+                border: 1px solid #1E86B0;
+                box-shadow: 0px 2px 20px #000000, 0px 0px 15px 4px rgba(0, 110, 134, 0.35);
+                border-radius: 4px;
+                color: #4BE8F2;
+                font-family: "Eurostile Extd";
+                text-shadow: 0px 1px 5px #000000, 0px 1px 23px rgba(0, 240, 255, 0.29);
             }
             .content_div{
                 position: absolute;
                 margin-left: 30%;
             }
+
             .jg_pan{
                 border: 1px solid #424242;
                 /* height: 800px;
                 width: 680px; */
             }
+
             .point_object{
                 position: absolute;
                 background-color: rgba(0,0,0,0);
@@ -25,6 +58,7 @@
                 height: 30px;
                 border-radius: 30px;
             }
+
             .point_object:hover{
                 background-color: rgba(0,255,0,0.5);
                 cursor: pointer;
@@ -34,14 +68,14 @@
         <script src="js/units.js"></script>
     </head>
     <body>
-        <h1>장기(스타)온라인</h1>
+        <h1 class="blz-button2" style="text-align: center; font-size: 20px; padding: 8px;">장기(스타)온라인 <span>made by kithub</span></span></h1>
         <!-- <audio autoplay loop>
             <source src="sound/attack.mp3" type="audio/mp3"/>
         </audio> -->
         <div class="wrap">
             <p>blue:테란 / red:프로토스</p>
-            <button id="start" onclick="start();">게임시작</button>
-            <button id="reset" onclick="reset();">게임리셋</button>
+            <a id="start" class="blz-button" onclick="start();">게임시작</a>
+            <a id="reset" class="blz-button2" onclick="reset();">게임리셋</a>
             <div id="content" class="content_div">
                 <canvas id="jgPan" class="jg_pan" width="800" height="880"></canvas>
             </div>
@@ -58,7 +92,6 @@
                 
             }
 
-           
             // const MAP_XY = [
             //     [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0],
             //     [0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],
@@ -132,17 +165,18 @@
                     let name = target.dataset.name;
                     let team = target.dataset.team;
                     let selectedUnit = UNITS[team][name];
-                    //console.log("select unit", selectedUnit);
 
                     //선택은 한번만가능하도록
                     if(SELECTED.length<1){
-                        //SOUNDS.play('click',bgm);
                         selected(selectedUnit,e.target);
                     }else{
-                        
-
-                        console.log("공격준비!")
-                        attach(selectedUnit,e.target);
+                        if(Object.is(SELECTED[0].unit,selectedUnit)){
+                            console.log("선택 취소");
+                            selected(selectedUnit,e.target);
+                        }else{
+                            console.log("공격준비!")
+                            attach(selectedUnit,e.target);
+                        }    
                     }
 
                 }else if(target.className === 'move_point'){
@@ -212,10 +246,10 @@
                     JGctx.moveTo(0, yLine);
                     JGctx.lineTo(WIDTH, yLine);
                 }
-                JGctx.strokeStyle = "black";
+                JGctx.strokeStyle = "#7AFF7A";
                 JGctx.stroke();
                 
-                console.log("1. 장기판 생성 완료");
+                console.log("1. 맵 생성 완료");
 
                 //이동 포인트 만들기(꼭지점)
                 for (let cy = 0; cy <= JGCellCount; cy++) {

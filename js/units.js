@@ -14,16 +14,25 @@ class JANG{
         this.width = 80;
         this.height = 80;
         this.color;
+        this.accessZonePs = [];//이동가능한지역
+        
+        //MOVE
+        this.DIRECTION = [];
     }
     
     setUnit(team){
         this.team = team;
         if(team === 'blue'){this.init_position = [400,110];}
         else if(team === 'red'){this.init_position = [400,770];}
+        this.team === 'blue' ? this.DIRECTION.push([3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,0],[5,1],[5,2]) : this.DIRECTION.push([3,6],[3,7],[3,8],[4,6],[4,7],[4,8],[5,6],[5,7],[5,8]);
 
         this.current = this.init_position;
         document.getElementById('content').appendChild(set_style(this));
         UNITS[this.team][this.name] = this;
+    }
+
+    move(){
+
     }
 }
 
@@ -39,6 +48,7 @@ class CHA{
         this.width = 60;
         this.height = 60;
         this.color;
+        this.accessZonePs;//이동가능한지역
     }
     
     setUnit(team,up){
@@ -67,6 +77,7 @@ class PO{
         this.width = 60;
         this.height = 60;
         this.color;
+        this.accessZonePs;//이동가능한지역
         // this.team=='blue'?this.color = 'rgba(0,0,255,1)':this.color = 'rgba(255,0,0,1)';
     }
             
@@ -96,7 +107,7 @@ class JOL{
         this.width = 45;
         this.height = 45;
         this.color;
-
+        this.accessZonePs = [];//이동가능한지역
         //MOVE
         this.DIRECTION = [];
     }

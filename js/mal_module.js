@@ -19,6 +19,7 @@ let SOUNDS = {
     },
     play:function(type,audio){
         audio.src = this[type].src;
+        // audio.attribute = 'loop';
         console.log(audio)
         audio.play();
     }
@@ -28,7 +29,7 @@ let SOUNDS = {
     게임 시작
 */
 const start=()=>{   
-    SOUNDS.play('bgm',bgm);
+   // SOUNDS.play('bgm',bgm);
     init();
 }
 
@@ -80,27 +81,43 @@ const set_style=(_this)=>{
 const calculMovePosition=()=>{//유닛이동범위계산
     console.log("현재위치 >> "+getUnitPosition());
     console.log(getUnit())
+    let name = getUnit().name;
     let currentPosition = getUnitPosition();
-    let accessZonePs=[];
     let unit = getUnit();
     let X_min = 0;
-    let X_max = 8;
+    let X_max = 800;
     let Y_min = 0;
-    let Y_max = 8;
+    let Y_max = 880;
     let DIRECTION = getUnit().DIRECTION;
+
+    //accessZonePs 초기화
+    if(getUnit().accessZonePs.length > 0 ){getUnit().accessZonePs = [];}
     
+    //이동이 자유로운 유닛들
     // console.log(" ---- 이동 가능한 지역 ---- ");
     for (let d = 0; d < DIRECTION.length; d++) {
         //console.log(DIRECTION[d][0] + ', ' +DIRECTION[d][1])
-        let d_x = currentPosition[0]+(DIRECTION[d][0]*100);
-        let d_y = currentPosition[1]+(DIRECTION[d][1]*100);
-        //if(DIRECTION[d][0]<X_min || DIRECTION[d][0]>X_max){continue;};
+        let d_x = 0;
+        let d_y = 0;
+        if(name==='JANG' || name==='SA'){
+            //이동이 제한적인 유닛
+            d_x = DIRECTION[d][0]*100;
+            d_y = DIRECTION[d][1]*100;
+        }else{
+            //이동이 자유로운 유닛
+            d_x = currentPosition[0]+(DIRECTION[d][0]*100);
+            d_y = currentPosition[1]+(DIRECTION[d][1]*100);
+        }
+        currentPosition[1]+(DIRECTION[d][1]*100);
         if(currentPosition[0] == d_x && currentPosition[1] == d_y){continue;};//같은위치는 표시하지 않는다.
-        accessZonePs.push([currentPosition[0]+(DIRECTION[d][0]*100),currentPosition[1]+(DIRECTION[d][1]*100)]);
-        makeAccessPoint(currentPosition[0]+(DIRECTION[d][0]*100),currentPosition[1]+(DIRECTION[d][1]*100));
-       // console.log(currentPosition[0]+(DIRECTION[d][0]*100), ' ::' , currentPosition[1]+(DIRECTION[d][1]*100))
+        if(d_x < X_min || d_x > X_max || d_y < Y_min || d_y > Y_max){
+            console.log("갈수 없는 위치" +' [ ' , DIRECTION[d][0],',',DIRECTION[d][1],' ]')
+        }else{
+            getUnit().accessZonePs.push([d_x,d_y]);
+        }
     }
-    console.log(" ---- 이동 가능한 지역 >" ,accessZonePs);
+    makeAccessPoint(getUnit().accessZonePs);
+    console.log(" ---- 이동 가능한 지역 >" ,getUnit().accessZonePs);
 
 }
 
@@ -112,12 +129,13 @@ const move=(_target)=>{
     console.log(Math.floor(_target.dataset.x/100) + " / " + Math.floor(_target.dataset.y/100))
     if(SELECTED.length > 0){
         console.log("선택된 유닛 있음")
+
+        //이동 가능한 지역이 아니면 return;
        // SOUNDS.play('attack',bgm);
         let s_unit = SELECTED[0];
         s_unit['tag'].style.left = (_target.dataset.x-(s_unit.unit.width/2))+'px';
         s_unit['tag'].style.top = (_target.dataset.y-(s_unit.unit.height/2))+'px';
         getUnit().current = [Number(_target.dataset.x),Number(_target.dataset.y)];
-        removeDivByClass('apoint');//이동할때마다 이동가능 포인트요소 지워주기
         selected(s_unit['unit'],s_unit['tag'])
     }
 }
@@ -130,6 +148,7 @@ const selected = (_unit,_tag) =>{
         //이동취소 or 완료 유닛
         _unit.selected = false;
         _tag.style.border = 'none';
+        removeDivByClass('apoint');//이동할때마다 이동가능 포인트요소 지워주기
         SELECTED = [];
     }else{
         //이동준비중인 유닛
@@ -159,18 +178,22 @@ const removeDivByClass=(_className)=>{
 }
 
 //이동가능한 지역 포인트 
-const makeAccessPoint=(x,y)=>{
+const makeAccessPoint=(accessZonePs)=>{
     let WIDTH = 50;
     let HEIGHT = 50;
-    let pointDiv = document.createElement('div');
-    pointDiv.className = 'apoint';
-    pointDiv.style.position = 'absolute';
-    pointDiv.style.background = 'red';
-    pointDiv.style.width = WIDTH+'px';
-    pointDiv.style.height = HEIGHT+'px';
-    pointDiv.style.top = (y-(HEIGHT/2))+'px';
-    pointDiv.style.left = (x-(WIDTH/2))+'px';
-    document.getElementById('content').appendChild(pointDiv);
+    for (let i = 0; i < accessZonePs.length; i++) {
+        let pointDiv = document.createElement('div');
+        pointDiv.className = 'apoint blz-button';
+        pointDiv.style.position = 'absolute';
+        pointDiv.style.background = 'rgba(126, 255, 85, 0.5)';
+        pointDiv.style.borderRadius = '50px';
+        pointDiv.style.width = WIDTH+'px';
+        pointDiv.style.height = HEIGHT+'px';
+        pointDiv.style.top = (accessZonePs[i][1]-(HEIGHT/2)+2)+'px';
+        pointDiv.style.left = (accessZonePs[i][0]-(WIDTH/2)+2)+'px';
+        document.getElementById('content').appendChild(pointDiv);
+        
+    }
 }
 
 
