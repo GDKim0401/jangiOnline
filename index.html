@@ -4,6 +4,11 @@
             @import url(css/reset.css);
             @import url(css/main.css);
             * {margin: 0; padding: 0}
+
+            body{
+                background-color: rgba(0, 0, 0, 0.473);
+                /* cursor: url('./img/cursor.png'); */
+            }
             .content_div{
                 position: absolute;
                 margin-left: 30%;
@@ -26,22 +31,28 @@
             }
         </style>
         <script src="js/mal_module.js"></script>
+        <script src="js/units.js"></script>
     </head>
     <body>
-        <h1>장기온라인</h1>
+        <h1>장기(스타)온라인</h1>
+        <!-- <audio autoplay loop>
+            <source src="sound/attack.mp3" type="audio/mp3"/>
+        </audio> -->
         <div class="wrap">
+            <p>blue:테란 / red:프로토스</p>
+            <button id="start" onclick="start();">게임시작</button>
             <button id="reset" onclick="reset();">게임리셋</button>
             <div id="content" class="content_div">
                 <canvas id="jgPan" class="jg_pan" width="800" height="880"></canvas>
             </div>
         </div>
         <script>
-
             window.onload = function(){
-                init();
+                //init();
             }
 
             let init =() => {
+              
                 drawRoad();
                 createUnits();
                 
@@ -125,14 +136,18 @@
 
                     //선택은 한번만가능하도록
                     if(SELECTED.length<1){
+                        //SOUNDS.play('click',bgm);
                         selected(selectedUnit,e.target);
                     }else{
+                        
+
                         console.log("공격준비!")
                         attach(selectedUnit,e.target);
                     }
 
                 }else if(target.className === 'move_point'){
                         //이동 좌표 선택시 
+                        console.log(target.dataset.x," || ",target.dataset.y);
                         move(target);
                 }else{
                 }
@@ -263,6 +278,8 @@
                 new SA().setUnit('red','R');
 
                 console.log("3. 유닛 생성 완료")
+
+             
             }
          
         </script>
