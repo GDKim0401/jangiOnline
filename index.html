@@ -77,7 +77,7 @@
             <a id="start" class="blz-button" onclick="start();">게임시작</a>
             <a id="reset" class="blz-button2" onclick="reset();">게임리셋</a>
             <div id="content" class="content_div">
-                <canvas id="jgPan" class="jg_pan" width="800" height="880"></canvas>
+                <canvas id="jgPan" class="jg_pan" width="800" height="800"></canvas>
             </div>
         </div>
         <script>
@@ -106,8 +106,8 @@
             let MAP_XY = [];
             
             const canvas = document.getElementById('jgPan');
-            const WIDTH = canvas.width;
-            const HEIGHT = canvas.height;
+            const WIDTH = MAP.WIDTH;//CANVAS WIDTH와 동일
+            const HEIGHT = MAP.HEIGHT;//CANVAS HIGHT와 동일
 
             /*
                 장기판 관련

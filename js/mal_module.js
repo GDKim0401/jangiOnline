@@ -1,5 +1,9 @@
 let bgm = new Audio();
 let SELECTED = [];
+let MAP = {
+    WIDTH : 800,
+    HEIGHT : 800
+}
 let UNITS = {
     blue:{},
     red:{}
@@ -67,8 +71,8 @@ const set_style=(_this)=>{
     unitDiv.style.background = _this.color;
     unitDiv.style.width = _this.width+'px';
     unitDiv.style.height = _this.height+'px';
-    unitDiv.style.top = (_this.init_position[1]-(_this.height/2))+'px';
-    unitDiv.style.left = (_this.init_position[0]-(_this.width/2))+'px';
+    unitDiv.style.top = ((_this.init_position[1]*100)-(_this.height/2))+'px';
+    unitDiv.style.left = ((_this.init_position[0]*100)-(_this.width/2))+'px';
     // unitDiv.style.borderRadius = '10px';
     return unitDiv;
 }
@@ -87,29 +91,28 @@ const calculMovePosition=()=>{//유닛이동범위계산
     let X_min = 0;
     let X_max = 800;
     let Y_min = 0;
-    let Y_max = 880;
+    let Y_max = 800;
     let DIRECTION = getUnit().DIRECTION;
 
     //accessZonePs 초기화
     if(getUnit().accessZonePs.length > 0 ){getUnit().accessZonePs = [];}
-    
+
     //이동이 자유로운 유닛들
     // console.log(" ---- 이동 가능한 지역 ---- ");
     for (let d = 0; d < DIRECTION.length; d++) {
         //console.log(DIRECTION[d][0] + ', ' +DIRECTION[d][1])
         let d_x = 0;
         let d_y = 0;
-        if(name==='JANG' || name==='SA'){
+        if(name==='JANG' || name==='SAR' || name==='SAL'){
             //이동이 제한적인 유닛
             d_x = DIRECTION[d][0]*100;
             d_y = DIRECTION[d][1]*100;
         }else{
             //이동이 자유로운 유닛
-            d_x = currentPosition[0]+(DIRECTION[d][0]*100);
-            d_y = currentPosition[1]+(DIRECTION[d][1]*100);
+            d_x = (currentPosition[0]*100)+(DIRECTION[d][0]*100);
+            d_y = (currentPosition[1]*100)+(DIRECTION[d][1]*100);
         }
-        currentPosition[1]+(DIRECTION[d][1]*100);
-        if(currentPosition[0] == d_x && currentPosition[1] == d_y){continue;};//같은위치는 표시하지 않는다.
+        if((currentPosition[0]*100) == d_x && (currentPosition[1]*100) == d_y){continue;};//같은위치는 표시하지 않는다.
         if(d_x < X_min || d_x > X_max || d_y < Y_min || d_y > Y_max){
             console.log("갈수 없는 위치" +' [ ' , DIRECTION[d][0],',',DIRECTION[d][1],' ]')
         }else{
@@ -126,16 +129,22 @@ const calculMovePosition=()=>{//유닛이동범위계산
     유닛 이동 함수
 */
 const move=(_target)=>{
-    console.log(Math.floor(_target.dataset.x/100) + " / " + Math.floor(_target.dataset.y/100))
+    console.log(Math.floor(_target.dataset.x) + " / " + Math.floor(_target.dataset.y))
     if(SELECTED.length > 0){
         console.log("선택된 유닛 있음")
-
         //이동 가능한 지역이 아니면 return;
+        let flag = getUnit().accessZonePs.filter((e)=>{if(e[0] == _target.dataset.x && e[1] == _target.dataset.y){return true;}})
+        if(flag.length > 0){
+            console.log("이동할수 있는 위치")
+        }else{
+            alert("이동할수 없는 위치 입니다.")
+            return;
+        }
        // SOUNDS.play('attack',bgm);
         let s_unit = SELECTED[0];
         s_unit['tag'].style.left = (_target.dataset.x-(s_unit.unit.width/2))+'px';
         s_unit['tag'].style.top = (_target.dataset.y-(s_unit.unit.height/2))+'px';
-        getUnit().current = [Number(_target.dataset.x),Number(_target.dataset.y)];
+        getUnit().current = [Number(_target.dataset.x/100),Number(_target.dataset.y/100)];
         selected(s_unit['unit'],s_unit['tag'])
     }
 }
