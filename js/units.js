@@ -48,7 +48,10 @@ class CHA{
         this.width = 60;
         this.height = 60;
         this.color;
-        this.accessZonePs;//이동가능한지역
+        this.accessZonePs = [];//이동가능한지역
+        
+        //MOVE
+        this.DIRECTION = [];
     }
     
     setUnit(team,up){
@@ -59,6 +62,7 @@ class CHA{
         else if(team === 'red' && up === 'L'){this.init_position = [0,8];}
         else if(team === 'red' && up === 'R'){this.init_position = [8,8];}
 
+        this.DIRECTION.push([-1,0],[1,0],[0,-1],[0,1]);
         this.current = this.init_position;
         document.getElementById('content').appendChild(set_style(this));
         UNITS[this.team][this.name] = this;
@@ -150,7 +154,27 @@ class MA{
         this.width = 60;
         this.height = 60;
         this.color;
-        // this.team=='blue'?this.color = 'rgba(0,0,255,1)':this.color = 'rgba(255,0,0,1)';
+        this.accessZonePs = [];//이동가능한지역
+        //MOVE
+        this.DIRECTION = [];
+        this.MOVE = {
+            U:[
+                [[0,-1],[-1,-1]],
+                [[0,-1],[1,-1]],
+            ],
+            R:[
+                [[1,0],[1,-1]],
+                [[1,0],[1,1]]
+            ],
+            D:[
+                [[0,1],[-1,1]],
+                [[0,1],[1,1]]
+            ],
+            L:[
+                [[-1,0],[-1,-1]],
+                [[-1,0],[-1,1]]
+            ]
+        }
     }
             
     setUnit(team,up,up2){
@@ -164,7 +188,9 @@ class MA{
         else if(team === 'red' && up === 'L' && up2 === 'R'){this.init_position = [2,8];}
         else if(team === 'red' && up === 'R' && up2 === 'L'){this.init_position = [6,8];}
         else if(team === 'red' && up === 'R' && up2 === 'R'){this.init_position = [7,8];}
-        
+
+        this.DIRECTION.push([-2,-1],[-2,1],[2,-1],[2,1],[-1,-2],[1,-2],[-1,2],[1,2]);
+
         this.current = this.init_position;
         document.getElementById('content').appendChild(set_style(this));
         UNITS[this.team][this.name] = this;
@@ -183,7 +209,10 @@ class SANG{
         this.width = 60;
         this.height = 60;
         this.color;
-        // this.team=='blue'?this.color = 'rgba(0,0,255,1)':this.color = 'rgba(255,0,0,1)';
+
+        this.accessZonePs = [];//이동가능한지역
+        //MOVE
+        this.DIRECTION = [];
     }
             
     setUnit(team,up,up2){
@@ -198,6 +227,7 @@ class SANG{
         else if(team === 'red' && up === 'R' && up2 === 'L'){this.init_position = [6,8];}
         else if(team === 'red' && up === 'R' && up2 === 'R'){this.init_position = [7,8];}
         
+        this.DIRECTION.push([-3,-2],[-3,2],[3,-2],[3,2],[-2,-3],[2,-3],[-2,3],[2,3]);
         this.current = this.init_position;
         let unitDiv = document.createElement('div');
         document.getElementById('content').appendChild(set_style(this));

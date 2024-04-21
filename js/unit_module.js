@@ -97,7 +97,6 @@ const calculMovePosition=()=>{//유닛이동범위계산
     //accessZonePs 초기화
     if(getUnit().accessZonePs.length > 0 ){getUnit().accessZonePs = [];}
 
-    //이동이 자유로운 유닛들
     // console.log(" ---- 이동 가능한 지역 ---- ");
     for (let d = 0; d < DIRECTION.length; d++) {
         //console.log(DIRECTION[d][0] + ', ' +DIRECTION[d][1])
@@ -107,17 +106,36 @@ const calculMovePosition=()=>{//유닛이동범위계산
             //이동이 제한적인 유닛
             d_x = DIRECTION[d][0]*100;
             d_y = DIRECTION[d][1]*100;
+            if((currentPosition[0]*100) == d_x && (currentPosition[1]*100) == d_y){continue;};//같은위치는 표시하지 않는다.
+            if(d_x < X_min || d_x > X_max || d_y < Y_min || d_y > Y_max){
+                console.log("갈수 없는 위치" +' [ ' , DIRECTION[d][0],',',DIRECTION[d][1],' ]')
+            }else{
+                getUnit().accessZonePs.push([d_x,d_y]);
+            }
+        }else if(name==='CHAL' || name==='CHAR'){
+            for (let c = 0; c <= 8; c++) {m
+                d_x = (currentPosition[0]*100)+(DIRECTION[d][0]*100*c);
+                d_y = (currentPosition[1]*100)+(DIRECTION[d][1]*100*c);
+                // console.log(' [ ' , d_x,',',d_y,' ]')
+                if((currentPosition[0]*100) == d_x && (currentPosition[1]*100) == d_y){continue;};//같은위치는 표시하지 않는다.
+                if(d_x < X_min || d_x > X_max || d_y < Y_min || d_y > Y_max){
+                    console.log("갈수 없는 위치" +' [ ' , DIRECTION[d][0],',',DIRECTION[d][1],' ]')
+                }else{
+                    getUnit().accessZonePs.push([d_x,d_y]);
+                }
+            }
         }else{
             //이동이 자유로운 유닛
             d_x = (currentPosition[0]*100)+(DIRECTION[d][0]*100);
             d_y = (currentPosition[1]*100)+(DIRECTION[d][1]*100);
+            if((currentPosition[0]*100) == d_x && (currentPosition[1]*100) == d_y){continue;};//같은위치는 표시하지 않는다.
+            if(d_x < X_min || d_x > X_max || d_y < Y_min || d_y > Y_max){
+                console.log("갈수 없는 위치" +' [ ' , DIRECTION[d][0],',',DIRECTION[d][1],' ]')
+            }else{
+                getUnit().accessZonePs.push([d_x,d_y]);
+            }
         }
-        if((currentPosition[0]*100) == d_x && (currentPosition[1]*100) == d_y){continue;};//같은위치는 표시하지 않는다.
-        if(d_x < X_min || d_x > X_max || d_y < Y_min || d_y > Y_max){
-            console.log("갈수 없는 위치" +' [ ' , DIRECTION[d][0],',',DIRECTION[d][1],' ]')
-        }else{
-            getUnit().accessZonePs.push([d_x,d_y]);
-        }
+
     }
     makeAccessPoint(getUnit().accessZonePs);
     console.log(" ---- 이동 가능한 지역 >" ,getUnit().accessZonePs);
@@ -125,8 +143,38 @@ const calculMovePosition=()=>{//유닛이동범위계산
 }
 
 
+const calculMovePosition_refect=()=>{//유닛이동범위계산
+    console.log("현재위치 >> "+getUnitPosition());
+    console.log(getUnit())
+    let name = getUnit().name;
+    let currentPosition = getUnitPosition();
+    let unit = getUnit();
+    let X_min = 0;
+    let X_max = 800;
+    let Y_min = 0;
+    let Y_max = 800;
+    let DIRECTION = getUnit().DIRECTION;
+    let UNIT_MOVE_TEMP = getUnit().MOVE;
+
+
+    for (let i = 0; i < UNIT_MOVE_TEMP['U'].length; i++) {
+        let d_x = 0;
+        let d_y = 0;
+        console.log(UNIT_MOVE_TEMP['U'][i][0]);
+        console.log(UNIT_MOVE_TEMP['U'][i][1]);
+        d_x = (currentPosition[0]*100)+(UNIT_MOVE_TEMP['U'][i][0]*100);
+        d_y = (currentPosition[1]*100)+(UNIT_MOVE_TEMP['U'][i][1]*100);
+        console.log(d_x, " ," , d_y);
+    }
+
+    
+}
+
+
+
 /*
     유닛 이동 함수
+    (이동 중 유닛 이동 가능 체크 필요)
 */
 const move=(_target)=>{
     console.log(Math.floor(_target.dataset.x) + " / " + Math.floor(_target.dataset.y))
@@ -164,7 +212,7 @@ const selected = (_unit,_tag) =>{
         _unit.selected = true;
         _tag.style.border = '3px solid #424242';
         SELECTED.push({unit : _unit, tag : _tag});
-        calculMovePosition();
+        calculMovePosition_refect();
     }
 }
 
